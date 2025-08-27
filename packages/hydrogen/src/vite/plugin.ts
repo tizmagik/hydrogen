@@ -80,8 +80,12 @@ export function hydrogen(pluginOptions: HydrogenPluginOptions = {}): Plugin[] {
             // Avoid optimizing Hydrogen itself in the monorepo
             // to prevent caching source code changes:
             include: isHydrogenMonorepo
-              ? ['content-security-policy-builder', 'worktop/cookie']
-              : ['@shopify/hydrogen'],
+              ? [
+                  'content-security-policy-builder',
+                  'worktop/cookie',
+                  '@shopify/graphql-client',
+                ]
+              : ['@shopify/hydrogen', '@shopify/graphql-client'],
           },
         };
       },
@@ -107,6 +111,10 @@ export function hydrogen(pluginOptions: HydrogenPluginOptions = {}): Plugin[] {
 
         oxygenPlugin?.api?.registerPluginOptions?.({
           compatibilityDate: getCompatDate(),
+          env: {
+            // Pass the project root to the worker for Chrome DevTools workspace configuration
+            HYDROGEN_PROJECT_ROOT: resolvedConfig.root,
+          },
           requestHook: ({request, response, meta}) => {
             // Emit events for requests
             emitRequestEvent(

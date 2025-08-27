@@ -25,7 +25,11 @@
     "typecheck:examples": "turbo typecheck --parallel --filter=./examples/*",
     "test": "turbo run test --parallel",
     "test:watch": "turbo run test:watch",
-    "version": "changeset version && npm run version:post && npm run format",
+    "test:calver": "./.changeset/test-calver-comparison.sh",
+    "test:calver:dry": "node .changeset/enforce-calver-local.js --dry-run",
+    "test:calver:branch": "node .changeset/get-calver-version-branch.js",
+    "version": "npm run version:changeset && node .changeset/enforce-calver-ci.js && npm run version:post && npm run format",
+    "version:changeset": "changeset version",
     "version:post": "npm run version:hydrogen && npm run version:cli",
     "version:hydrogen": "node -p \"'export const LIB_VERSION = \\'' + require('./packages/hydrogen/package.json').version + '\\';'\" > packages/hydrogen/src/version.ts",
     "version:cli": "cd packages/cli && npm run generate:manifest",
@@ -62,11 +66,12 @@
   "dependencies": {
     "@shopify/cli-hydrogen": "*",
     "react-router": "^7.5.1",
-    "react-router-dom": "^7.5.1"
+    "react-router-dom": "^7.5.1",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.4.8",
-    "@changesets/cli": "^2.26.0",
+    "@changesets/cli": "^2.29.6",
     "@eslint/compat": "^1.2.5",
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.18.0",
